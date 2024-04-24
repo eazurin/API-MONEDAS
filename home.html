@@ -1,0 +1,316 @@
+<!-- homepage.html -->
+<html>
+<head>
+    <title>SERVICIO ABC DE MONEDAS DEL MUNDO</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f0f0f0;
+            color: #333;
+        }
+        h1 {
+            color: #007bff;
+        }
+        h2, h3 {
+            color: #555;
+        }
+        ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .coins-container {
+            margin-top: 20px;
+        }
+        .coin-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .coin-flag {
+            width: 30px;
+            height: auto;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>BIENVENIDO AL API DE MONEDAS DEL MUNDO</h1>
+    <h2>Documentación de la API:</h2>
+    <p>Esta API proporciona acceso a datos de monedas.</p>
+    <h3>Endpoints Disponibles:</h3>
+    <ul>
+        <li>GET /coins - Obtiene todas las monedas.</li>
+        <li>GET /coins/:id - Obtiene una moneda por su ID.</li>
+        <li>POST /coins - Crea una nueva moneda.</li>
+        <li>PUT /coins/:id - Actualiza una moneda existente por su ID.</li>
+        <li>DELETE /coins/:id - Elimina una moneda por su ID.</li>
+    </ul>
+    <h3>Formato de los Datos:</h3>
+    <p>Los datos de las monedas están en formato JSON y contienen los campos : 
+        "id":el identificador,
+        "Flag":url a la imagen,
+        "CountryName":Nombre del Pais,
+        "Currency": La divisa,
+            "Code": El codigo de la moneda,
+            "Symbol": Simbolo de la moneda
+    </p>
+    <p>Versión de la API: 1.0</p>
+    <p>Desarrollado por Diego Huamani Luque,Eberth Azurin Zuñiga,Fernando Canal Mendoza,Gersson Huichi Santander,Henry Galvez Quilla,Jeancarlo Chua Aguilar
+    </p>
+    <h1>Usa el API</h1>
+
+    <ul id="coins-list">Aqui se mostraran los resultados</ul>
+
+    <h3>Cargar Lista de Monedas</h3>
+    <button id="load-coins-btn">Cargar Lista de Monedas</button>
+
+    <div>
+        <h3>Buscar por ID de la moneda</h3>
+        <label for="coin-id">ID de la Moneda:</label>
+        <input type="text" id="coin-id" name="coin-id">
+        <button id="get-coin-btn">Obtener Moneda por ID</button>
+    </div>
+
+    <div>
+        <h3>Crear Nueva Moneda:</h3>
+        <form id="create-coin-form">
+            <label for="country-name">Nombre del País:</label><br>
+            <input type="text" id="country-name" name="country-name"><br>
+            <label for="currency">Divisa:</label><br>
+            <input type="text" id="currency" name="currency"><br>
+            <label for="code">Código:</label><br>
+            <input type="text" id="code" name="code"><br>
+            <label for="symbol">Símbolo:</label><br>
+            <input type="text" id="symbol" name="symbol"><br><br>
+            <button type="submit">Crear Moneda</button>
+        </form>
+    </div>
+
+    <div>
+        <h3>Actualizar Moneda:</h3>
+        <form id="update-coin-form">
+            <label for="update-coin-id">ID de la Moneda:</label><br>
+            <input type="text" id="update-coin-id" name="update-coin-id"><br>
+            <label for="update-country-name">Nuevo Nombre del País:</label><br>
+            <input type="text" id="update-country-name" name="update-country-name"><br>
+            <label for="update-currency">Nueva Divisa:</label><br>
+            <input type="text" id="update-currency" name="update-currency"><br>
+            <label for="update-code">Nuevo Código:</label><br>
+            <input type="text" id="update-code" name="update-code"><br>
+            <label for="update-symbol">Nuevo Símbolo:</label><br>
+            <input type="text" id="update-symbol" name="update-symbol"><br><br>
+            <button type="submit">Actualizar Moneda</button>
+        </form>
+    </div>
+
+    <div>
+        <h3>Eliminar Moneda:</h3>
+        <form id="delete-coin-form">
+            <label for="delete-coin-id">ID de la Moneda a Eliminar:</label><br>
+            <input type="text" id="delete-coin-id" name="delete-coin-id"><br><br>
+            <button type="submit">Eliminar Moneda</button>
+        </form>
+    </div>
+
+
+
+    
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const loadCoinsBtn = document.getElementById("load-coins-btn");
+            loadCoinsBtn.addEventListener("click", function() {
+                fetch("http://localhost:3000/coins")
+                    .then(response => response.json())
+                    .then(coins => {
+                        const coinsList = document.getElementById("coins-list");
+                        coinsList.innerHTML = ""; // Limpiar el contenido previo de la lista
+
+                        coins.forEach(coin => {
+                            const listItem = document.createElement("li");
+                            listItem.innerHTML = `
+                                <img src="${coin.Flag}" alt="${coin.CountryName}" style="width: 30px; height: auto;">
+                                <span>${coin.CountryName}</span> - ${coin.Currency} (${coin.Code}) - ${coin.Symbol} - ID: ${coin.id}
+                            `;
+                            coinsList.appendChild(listItem);
+                        });
+                    })
+                    .catch(error => console.error("Error al cargar la lista de monedas:", error));
+            });
+
+            const getCoinBtn = document.getElementById("get-coin-btn");
+            getCoinBtn.addEventListener("click", function() {
+                const coinId = document.getElementById("coin-id").value; // Obtener el valor del campo de entrada
+                fetch(`http://localhost:3000/coins/${coinId}`) // Realizar solicitud GET por ID
+                    .then(response => response.json())
+                    .then(coin => {
+                        // Crear un elemento li para la moneda obtenida por ID
+                        const listItem = document.createElement("li");
+                        listItem.innerHTML = `
+                            <img src="${coin.Flag}" alt="${coin.CountryName}" style="width: 30px; height: auto;">
+                            <span>${coin.CountryName}</span> - ${coin.Currency} (${coin.Code}) - ${coin.Symbol}
+                        `;
+                        const coinsList = document.getElementById("coins-list");
+                        coinsList.innerHTML = ""; // Limpiar el contenido previo de la lista
+                        coinsList.appendChild(listItem); // Agregar el elemento li a la lista de monedas
+                    })
+                    .catch(error => console.error("Error al obtener la moneda por ID:", error));
+            });
+
+            // Agregar evento submit al formulario "Crear Moneda"
+            const createCoinForm = document.getElementById("create-coin-form");
+            createCoinForm.addEventListener("submit", function(event) {
+                event.preventDefault(); // Evitar el envío del formulario por defecto
+
+                // Obtener los valores de los campos del formulario
+                const countryName = document.getElementById("country-name").value;
+                const currency = document.getElementById("currency").value;
+                const code = document.getElementById("code").value;
+                const symbol = document.getElementById("symbol").value;
+
+                // Objeto con los datos de la nueva moneda
+                const newCoinData = {
+                    CountryName: countryName,
+                    Currency: currency,
+                    Code: code,
+                    Symbol: symbol
+                };
+
+                // Realizar la solicitud POST para crear una nueva moneda
+                fetch("http://localhost:3000/coins", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(newCoinData)
+                })
+                .then(response => response.json())
+                .then(coin => {
+                    // Mostrar la moneda creada en la lista de monedas
+                    const coinsList = document.getElementById("coins-list");
+                    const listItem = document.createElement("li");
+                    coinsList.innerHTML = "";
+                    listItem.innerHTML = `
+
+                        <span>${coin.CountryName}</span> - ${coin.Currency} (${coin.Code}) - ${coin.Symbol}
+                    `;
+                    coinsList.appendChild(listItem);
+
+                    // Limpiar los campos del formulario después de crear la moneda
+                    createCoinForm.reset();
+                })
+                .catch(error => console.error("Error al crear la moneda:", error));
+            });
+
+            // Agregar evento submit al formulario "Actualizar Moneda"
+            const updateCoinForm = document.getElementById("update-coin-form");
+            updateCoinForm.addEventListener("submit", function(event) {
+                event.preventDefault(); // Evitar el envío del formulario por defecto
+
+                // Obtener los valores de los campos del formulario
+                const coinId = document.getElementById("update-coin-id").value;
+                const countryName = document.getElementById("update-country-name").value;
+                const currency = document.getElementById("update-currency").value;
+                const code = document.getElementById("update-code").value;
+                const symbol = document.getElementById("update-symbol").value;
+
+                // Objeto con los datos actualizados de la moneda
+                const updatedCoinData = {
+                    CountryName: countryName,
+                    Currency: currency,
+                    Code: code,
+                    Symbol: symbol
+                };
+
+                // Realizar la solicitud PUT para actualizar la moneda
+                fetch(`http://localhost:3000/coins/${coinId}`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(updatedCoinData)
+                })
+                .then(response => {
+                    if (response.ok) {
+                        // Mostrar mensaje de éxito si la actualización fue exitosa
+                        const coinsList = document.getElementById("coins-list");
+                        coinsList.innerHTML = ""; // Limpiar el contenido previo de la lista
+                        alert("Moneda actualizada correctamente, busque por ID para comprobar");
+                    } else {
+                        // Mostrar mensaje de error si hubo un problema con la actualización
+                        throw new Error("Error al actualizar la moneda");
+                    }
+                })
+                .catch(error => console.error(error));
+            });
+
+            // Agregar evento submit al formulario "Eliminar Moneda"
+            const deleteCoinForm = document.getElementById("delete-coin-form");
+            deleteCoinForm.addEventListener("submit", function(event) {
+                event.preventDefault(); // Evitar el envío del formulario por defecto
+
+                // Obtener el ID de la moneda a eliminar
+                const coinIdToDelete = document.getElementById("delete-coin-id").value;
+
+                // Realizar la solicitud DELETE para eliminar la moneda
+                fetch(`http://localhost:3000/coins/${coinIdToDelete}`, {
+                    method: "DELETE"
+                })
+                .then(response => response.json())
+                .then(responseData => {
+                    const coinsList = document.getElementById("coins-list");
+                    coinsList.innerHTML = ""; // Limpiar el contenido previo de la lista
+                    alert("Moneda actualizada correctamente, busque por ID para comprobar");
+                })
+                .catch(error => console.error("Error al eliminar la moneda:", error));
+            });
+
+        });
+
+        
+    </script>
+</body>
+</html>
