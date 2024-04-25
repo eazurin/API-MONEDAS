@@ -163,7 +163,7 @@
         document.addEventListener("DOMContentLoaded", function() {
             const loadCoinsBtn = document.getElementById("load-coins-btn");
             loadCoinsBtn.addEventListener("click", function() {
-                fetch("http://localhost:3000/coins")
+                fetch("/coins")
                     .then(response => response.json())
                     .then(coins => {
                         const coinsList = document.getElementById("coins-list");
@@ -184,7 +184,7 @@
             const getCoinBtn = document.getElementById("get-coin-btn");
             getCoinBtn.addEventListener("click", function() {
                 const coinId = document.getElementById("coin-id").value; // Obtener el valor del campo de entrada
-                fetch(`http://localhost:3000/coins/${coinId}`) // Realizar solicitud GET por ID
+                fetch(`/coins/${coinId}`) // Realizar solicitud GET por ID
                     .then(response => response.json())
                     .then(coin => {
                         // Crear un elemento li para la moneda obtenida por ID
@@ -220,7 +220,7 @@
                 };
 
                 // Realizar la solicitud POST para crear una nueva moneda
-                fetch("http://localhost:3000/coins", {
+                fetch("/coins", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
@@ -266,7 +266,7 @@
                 };
 
                 // Realizar la solicitud PUT para actualizar la moneda
-                fetch(`http://localhost:3000/coins/${coinId}`, {
+                fetch(`/coins/${coinId}`, {
                     method: "PUT",
                     headers: {
                         "Content-Type": "application/json"
@@ -296,7 +296,7 @@
                 const coinIdToDelete = document.getElementById("delete-coin-id").value;
 
                 // Realizar la solicitud DELETE para eliminar la moneda
-                fetch(`http://localhost:3000/coins/${coinIdToDelete}`, {
+                fetch(`/coins/${coinIdToDelete}`, {
                     method: "DELETE"
                 })
                 .then(response => response.json())
